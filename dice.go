@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// DoRolls takes a RollSpec and perform all of the random number generation
+// and math to fulfill the request.
 func DoRolls(spec RollSpec) RollResults {
 	var localResults RollResults
 

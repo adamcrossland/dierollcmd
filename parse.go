@@ -70,7 +70,7 @@ func (this *parseData) takeToken() token {
 
 	if this.curPos < len(this.request) {
 		curToken = charToToken(this.request[this.curPos : this.curPos+1])
-		this.curPos += 1
+		this.curPos++
 	} else {
 		curToken = TOKEN_END
 	}
@@ -79,7 +79,7 @@ func (this *parseData) takeToken() token {
 }
 
 func (this *parseData) rewind() {
-	this.curPos -= 1
+	this.curPos--
 }
 
 func (this parseData) peekToken() token {
@@ -109,7 +109,7 @@ func (this parseData) peekNextToken(index int) token {
 func (this *parseData) takeNum() int64 {
 	numCount := 0
 	for this.peekNextToken(numCount) == TOKEN_NUM {
-		numCount += 1
+		numCount++
 	}
 
 	foundNumString := this.request[this.curPos : this.curPos+numCount]

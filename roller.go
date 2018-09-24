@@ -1,10 +1,6 @@
 // roller
 package main
 
-import (
-	"encoding/json"
-)
-
 type RollSpec struct {
 	Sides    int64
 	BestOf   int64
@@ -14,17 +10,12 @@ type RollSpec struct {
 }
 
 type SetResult struct {
-	Total int   `json:"total"`
-	Count int   `json:"count"`
-	Dies  []int `json:"dice"`
+	Total int
+	Count int
+	Dies  []int
 }
 
 type RollResults struct {
-	Count int         `json:"count"`
-	Rolls []SetResult `json:"rolls"`
-}
-
-func (results RollResults) ToJSON() []byte {
-	coded, _ := json.Marshal(results)
-	return coded
+	Count int
+	Rolls []SetResult
 }

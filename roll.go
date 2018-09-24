@@ -18,7 +18,7 @@ func main() {
 
 		spec, specErr := Parse(eachSpec)
 		if specErr != nil {
-			fmt.Printf("roll specification in incorrect format: %s", specErr)
+			fmt.Printf("%s: roll specification in incorrect format: %s\n", eachSpec, specErr)
 		} else {
 			requestedRolls = append(requestedRolls, *spec)
 		}

@@ -22,7 +22,7 @@ func roll(spec RollSpec) SetResult {
 	var result SetResult
 
 	var eachDie int64
-	var sidesInt int = int(spec.Sides)
+	var sidesInt = int(spec.Sides)
 	for eachDie = 0; eachDie < spec.DieCount; eachDie++ {
 		die := rand.Intn(sidesInt) + 1
 		result.Count++
@@ -36,7 +36,7 @@ func roll(spec RollSpec) SetResult {
 	}
 
 	// Calculate the total, accounting for best-of modifiers
-	var countIdx int64 = 0
+	var countIdx int64
 	if spec.BestOf > 0 {
 		countIdx = spec.DieCount - spec.BestOf
 	}

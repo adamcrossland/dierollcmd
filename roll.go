@@ -3,20 +3,37 @@ package main
 import (
 	"fmt"
 	"os"
-	"roller"
 )
 
 func main() {
 	specs := os.Args[1:]
-	for eachSpec := 0; eachSpec < len(specs); eachSpec++ {
-		spec, specErr := roller.Parse(specs[eachSpec])
+	detailed := false
+	requestedRolls := make([]RollSpec, 5)
+
+	for _, eachSpec := range specs {
+		if eachSpec == "-d" {
+			detailed = true
+			continue
+		}
+
+		spec, specErr := Parse(eachSpec)
 		if specErr != nil {
-			fmt.Printf("Roll specification in incorrect format: %s", specErr)
+			fmt.Printf("roll specification in incorrect format: %s", specErr)
 		} else {
-			results := roller.DoRolls(*spec)
-			for eachRoll := 0; eachRoll < results.Count; eachRoll++ {
-				roll := results.Rolls[eachRoll]
-				fmt.Printf("%d ", roll.Total)
+			requestedRolls = append(requestedRolls, *spec)
+		}
+	}
+
+	for _, eachRequest := range requestedRolls {
+		results := DoRolls(eachRequest)
+		for eachRoll := 0; eachRoll < results.Count; eachRoll++ {
+			roll := results.Rolls[eachRoll]
+			fmt.Printf("%d ", roll.Total)
+			if detailed {
+				fmt.Printf(":")
+				for _, eachDie := range roll.Dies {
+					fmt.Printf(" %d", eachDie)
+				}
 			}
 			fmt.Printf("\n")
 		}

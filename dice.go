@@ -2,7 +2,7 @@ package main
 
 import (
 	"math/rand"
-	"time"
+	"sort"
 )
 
 // DoRolls takes a RollSpec and perform all of the random number generation
@@ -10,7 +10,6 @@ import (
 func DoRolls(spec RollSpec) RollResults {
 	var localResults RollResults
 
-	rand.Seed(time.Now().Unix())
 	var eachSet int64
 	for eachSet = 0; eachSet < spec.Times; eachSet++ {
 		localResults.Rolls = append(localResults.Rolls, roll(spec))
@@ -38,12 +37,19 @@ func roll(spec RollSpec) SetResult {
 	}
 
 	// Calculate the total, accounting for best-of modifiers
-	var countIdx int64
-	if spec.BestOf > 0 {
-		countIdx = spec.DieCount - spec.BestOf
+	countIdx := len(result.Dies) - 1
+
+	sortedRolls := make([]int, len(result.Dies))
+	copy(sortedRolls, result.Dies)
+	sort.Ints(sortedRolls)
+	var counted int64
+	countLimit := int(spec.BestOf)
+	if countLimit == 0 {
+		countLimit = int(spec.DieCount)
 	}
-	for ; countIdx < spec.DieCount; countIdx++ {
-		result.Total += result.Dies[countIdx]
+	for counted = 0; counted < int64(countLimit); counted++ {
+		result.Total += sortedRolls[countIdx]
+		countIdx--
 	}
 
 	result.Total += int(spec.Modifier)

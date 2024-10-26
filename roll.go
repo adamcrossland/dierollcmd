@@ -32,7 +32,7 @@ func main() {
 			if detailed {
 				fmt.Printf(":")
 				for _, eachDie := range roll.Dies {
-					fmt.Printf(" %d", eachDie)
+					fmt.Printf(" [%d]", eachDie)
 				}
 			}
 			fmt.Printf("\n")

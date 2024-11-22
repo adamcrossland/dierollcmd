@@ -65,12 +65,12 @@ func charToToken(char string) token {
 	return aToken
 }
 
-func (this *parseData) takeToken() token {
+func (parse *parseData) takeToken() token {
 	var curToken token = TOKEN_INVALID
 
-	if this.curPos < len(this.request) {
-		curToken = charToToken(this.request[this.curPos : this.curPos+1])
-		this.curPos++
+	if parse.curPos < len(parse.request) {
+		curToken = charToToken(parse.request[parse.curPos : parse.curPos+1])
+		parse.curPos++
 	} else {
 		curToken = TOKEN_END
 	}
@@ -78,15 +78,15 @@ func (this *parseData) takeToken() token {
 	return curToken
 }
 
-func (this *parseData) rewind() {
-	this.curPos--
+func (parse *parseData) rewind() {
+	parse.curPos--
 }
 
-func (this parseData) peekToken() token {
+func (parse parseData) peekToken() token {
 	var nextToken token = TOKEN_INVALID
 
-	if this.curPos+1 <= len(this.request) {
-		nextToken = charToToken(this.request[this.curPos : this.curPos+1])
+	if parse.curPos+1 <= len(parse.request) {
+		nextToken = charToToken(parse.request[parse.curPos : parse.curPos+1])
 	} else {
 		nextToken = TOKEN_END
 	}
@@ -94,11 +94,11 @@ func (this parseData) peekToken() token {
 	return nextToken
 }
 
-func (this parseData) peekNextToken(index int) token {
+func (parse parseData) peekNextToken(index int) token {
 	var nextToken token = TOKEN_INVALID
 
-	if this.curPos+index < len(this.request) {
-		nextToken = charToToken(this.request[this.curPos+index : this.curPos+index+1])
+	if parse.curPos+index < len(parse.request) {
+		nextToken = charToToken(parse.request[parse.curPos+index : parse.curPos+index+1])
 	} else {
 		nextToken = TOKEN_END
 	}
@@ -106,16 +106,16 @@ func (this parseData) peekNextToken(index int) token {
 	return nextToken
 }
 
-func (this *parseData) takeNum() int64 {
+func (parse *parseData) takeNum() int64 {
 	numCount := 0
-	for this.peekNextToken(numCount) == TOKEN_NUM {
+	for parse.peekNextToken(numCount) == TOKEN_NUM {
 		numCount++
 	}
 
-	foundNumString := this.request[this.curPos : this.curPos+numCount]
+	foundNumString := parse.request[parse.curPos : parse.curPos+numCount]
 
 	foundNum, _ := strconv.ParseInt(foundNumString, 10, 64)
-	this.curPos += numCount
+	parse.curPos += numCount
 
 	return foundNum
 }
@@ -144,7 +144,7 @@ func Parse(request string) (spec *RollSpec, err error) {
 					parsed.DieCount = data.takeNum()
 					if parsed.BestOf >= parsed.DieCount {
 						spec = nil
-						err = fmt.Errorf("The best-of value must be smaller than the dice count.")
+						err = fmt.Errorf("the best-of value must be smaller than the dice count")
 						return
 					}
 					data.curState = PARSE_CONTINUE
@@ -154,25 +154,25 @@ func Parse(request string) (spec *RollSpec, err error) {
 						data.takeToken()
 					} else {
 						spec = nil
-						err = fmt.Errorf("When a best-of number is provided, a number must be present after the ,.")
+						err = fmt.Errorf("when a best-of number is provided, a number must be present after the comma")
 						return
 					}
 				} else {
 					spec = nil
-					err = fmt.Errorf("When a die count is provided, either the character d must follow the count number or the character , must be present to indicate a best-of number.")
+					err = fmt.Errorf("when a die count is provided, either the character d must follow the count number or the character , must be present to indicate a best-of number")
 					return
 				}
 			case curToken == TOKEN_D:
 				if data.peekToken() != TOKEN_NUM {
 					spec = nil
-					err = fmt.Errorf("A number must always follow the character d.")
+					err = fmt.Errorf("a number must always follow the character d")
 					return
 				}
 				parsed.Sides = data.takeNum()
 				data.curState = PARSE_CONTINUE
 			default:
 				spec = nil
-				err = fmt.Errorf("Unsupported format: %s", request)
+				err = fmt.Errorf("unsupported format: %s", request)
 				return
 			}
 		case data.curState == PARSE_CONTINUE:
@@ -181,7 +181,7 @@ func Parse(request string) (spec *RollSpec, err error) {
 			case curToken == TOKEN_D:
 				if data.peekToken() != TOKEN_NUM {
 					spec = nil
-					err = fmt.Errorf("A number must always follow the character d.")
+					err = fmt.Errorf("a number must always follow the character d")
 					return
 				}
 				parsed.Sides = data.takeNum()
@@ -189,7 +189,7 @@ func Parse(request string) (spec *RollSpec, err error) {
 			case curToken == TOKEN_PLUS || curToken == TOKEN_MINUS:
 				if data.peekToken() != TOKEN_NUM {
 					spec = nil
-					err = fmt.Errorf("Plus or minus must always be followed by a number.")
+					err = fmt.Errorf("plus or minus must always be followed by a number")
 					return
 				}
 				isPlus := curToken == TOKEN_PLUS
@@ -201,13 +201,13 @@ func Parse(request string) (spec *RollSpec, err error) {
 			case curToken == TOKEN_X:
 				if data.peekToken() != TOKEN_NUM {
 					spec = nil
-					err = fmt.Errorf("x must always be followed by a number.")
+					err = fmt.Errorf("x must always be followed by a number")
 					return
 				}
 				parsed.Times = data.takeNum()
 			case curToken == TOKEN_BESTOF:
 				spec = nil
-				err = fmt.Errorf("The best-of character is not valid in that position.")
+				err = fmt.Errorf("the best-of character is not valid in that position")
 				return
 			case curToken == TOKEN_END:
 				data.curState = PARSE_COMPLETE
